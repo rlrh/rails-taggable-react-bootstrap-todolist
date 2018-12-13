@@ -13,3 +13,78 @@
  *= require_tree .
  *= require_self
  */
+
+ body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+  }
+  
+  .nusmods-main {
+    font-family: arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+  
+  .nusmods-img {
+    padding-bottom: 24px;
+  }
+  
+  #root {
+    position: relative;
+    width: 484px;
+  }
+  
+  .input {
+    box-sizing: border-box;
+    outline: none;
+    background-color: #fff;
+    height: 44px;
+    vertical-align: top;
+    border: none;
+    border-radius: 2px;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    width: 484px;
+    padding: 5px 9px;
+    padding-left: 16px;
+  }
+  
+  .input:hover,
+  .input:focus {
+    box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.08);
+  }
+  
+  ul {
+    position: relative;
+    width: 100%;
+    top: 0px;
+    margin: 0;
+    padding: 4px 0 8px;
+    left: 0;
+    box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.08);
+    z-index: 1123123123;
+    background: #fff;
+  }
+  
+  ul:empty {
+    padding: 0;
+  }
+  
+  li {
+    list-style: none;
+    padding: 0 16px;
+    line-height: 22px;
+    overflow: hidden;
+  }
+  
+  .right {
+    float: right;
+  }
+  
+  .strike {
+    text-decoration: line-through;
+  }

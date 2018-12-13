@@ -1,4 +1,7 @@
 class Api::TodosController < ApplicationController
+
+    wrap_parameters false
+
     def index
       render json: Todo.all
     end
@@ -21,7 +24,7 @@ class Api::TodosController < ApplicationController
     private
   
     def todo_params
-      params.require(:todo).permit(:id, :completed, :description)
+      params.require(:todo).permit(:id, :completed, :description, :tag_list)
     end
   end
   

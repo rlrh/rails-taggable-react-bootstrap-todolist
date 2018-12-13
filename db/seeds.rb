@@ -6,5 +6,9 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-todos = ['Mango', 'Pineapple', 'Passion fruit', 'Dragonfruit']
-todos.each{|todo| Todo.create(completed: false, description: "I am a delicious #{todo}.")}
+todos = ['delicious', 'interesting', 'pretty', 'nice']
+todos.each {|todo| 
+    x = Todo.create(completed: false, description: "I am a #{todo} to-do item." )
+    x.tag_list.add "example", "tag"
+    x.save
+}
