@@ -8,12 +8,11 @@ class Main extends React.Component {
         this.handleDelete = this.handleDelete.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
         this.handleComplete = this.handleComplete.bind(this);
+        this.updateToLatestState = this.updateToLatestState.bind(this);
     }
 
     componentDidMount() {
-        fetch(`/api/todos`)
-            .then((response) => { return response.json(); })
-            .then((data) => { this.setState({ items: data }); });
+        this.updateToLatestState();
     }
 
     render() {
@@ -55,10 +54,14 @@ class Main extends React.Component {
         })
         .then((response) => { return response.json(); })
         .then((todo)=>{
+            this.updateToLatestState();
+            this.setState({text: ''});
+            /*
             this.setState(state => ({
                 items: state.items.concat(todo),
                 text: ''
             }));
+            */
         });
 
     }
@@ -72,7 +75,8 @@ class Main extends React.Component {
             },
         })
         .then((response) => { 
-            this.setState({ items: this.state.items.filter(item => item.id != key) }) 
+            this.updateToLatestState();
+            // this.setState({ items: this.state.items.filter(item => item.id != key) }) 
         });
         
     }
@@ -87,12 +91,15 @@ class Main extends React.Component {
             }
         }).then((response) => { return response.json(); })
         .then((data) => { 
+            this.updateToLatestState();
+            /*
             let items = [...this.state.items];
             const index = items.findIndex(item => item.id == data.id);
             let item = { ...items[index] };
             item.description = data.description;
             items[index] = item;
             this.setState({ items });
+            */
         });
         
     }
@@ -107,16 +114,29 @@ class Main extends React.Component {
             }
         }).then((response) => { return response.json(); })
         .then((data) => { 
+            this.updateToLatestState();
+            /*
             let items = [...this.state.items];
             const index = items.findIndex(item => item.id == data.id);
             let item = { ...items[index] };
             item.completed = data.completed;
             items[index] = item;
             this.setState({ items });
+            */
         });
+        
 
     }
 
+    updateToLatestState() {
+        try {
+            fetch(`/api/todos`)
+            .then((response) => { return response.json(); })
+            .then((data) => { this.setState({ items: data }); });
+        } catch (err) {
+            console.log('fetch failed', err);
+        }
+    }
 
 }
 
