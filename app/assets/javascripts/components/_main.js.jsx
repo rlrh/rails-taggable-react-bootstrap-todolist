@@ -1,23 +1,24 @@
 class Main extends React.Component {
+    
     constructor(props) {
         super(props);
         this.state = { items: [], text: '' };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleComplete = this.handleComplete.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
+        this.handleComplete = this.handleComplete.bind(this);
     }
 
     componentDidMount() {
-        fetch('/api/todos.json')
-            .then((response) => { return response.json() })
-            .then((data) => { this.setState({ items: data }) });
+        fetch(`/api/todos`)
+            .then((response) => { return response.json(); })
+            .then((data) => { this.setState({ items: data }); });
     }
 
     render() {
         return (
-            <main class="nusmods-main">
+            <main className="nusmods-main">
                 <div>
                     <h3>Todolist On React Rails</h3>
                     <form onSubmit={this.handleSubmit}>
@@ -26,7 +27,7 @@ class Main extends React.Component {
                             onChange={this.handleChange}
                             value={this.state.text}
                             placeholder="What do you need to do? (Press Enter for new to-do)"
-                            autofocus="true"
+                            autoFocus="true"
                         />
                     </form>
                     <TodoList items={this.state.items} deleteHandler={this.handleDelete} completeHandler={this.handleComplete} editHandler={this.handleEdit} />
@@ -35,8 +36,6 @@ class Main extends React.Component {
         );
     }
 
-
-
     handleChange(e) {
         this.setState({ text: e.target.value });
     }
@@ -44,12 +43,10 @@ class Main extends React.Component {
     handleSubmit(e) {
         
         e.preventDefault();
-        if (!this.state.text.length) {
-            return;
-        }
+        if (!this.state.text.length) { return;}
         
-        let body = JSON.stringify({todo: {completed: false, description: this.state.text} })
-        fetch('api/todos', {
+        let body = JSON.stringify({todo: {completed: false, description: this.state.text} });
+        fetch(`api/todos`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -66,30 +63,60 @@ class Main extends React.Component {
 
     }
 
-    handleComplete(key) {
-        let items = [...this.state.items];
-        const index = items.findIndex(item => item.id == key);
-        let item = { ...items[index] };
-        if (item.completed)
-            item.completed = false;
-        else
-            item.completed = true;
-        items[index] = item;
-        this.setState({ items });
-    }
-
     handleDelete(key) {
-        this.setState({ items: this.state.items.filter(item => item.id != key) })
+        
+        fetch(`api/todos/${key}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then((response) => { 
+            this.setState({ items: this.state.items.filter(item => item.id != key) }) 
+        });
+        
     }
 
-    handleEdit(key, text) {
-        let items = [...this.state.items];
-        const index = items.findIndex(item => item.id == key);
-        let item = { ...items[index] };
-        item.text = text;
-        items[index] = item;
-        this.setState({ items });
+    handleEdit(todo) {
+        
+        fetch(`api/todos/${todo.id}`, {
+            method: 'PUT',
+            body: JSON.stringify({todo: todo}),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response) => { return response.json(); })
+        .then((data) => { 
+            let items = [...this.state.items];
+            const index = items.findIndex(item => item.id == data.id);
+            let item = { ...items[index] };
+            item.description = data.description;
+            items[index] = item;
+            this.setState({ items });
+        });
+        
     }
+
+    handleComplete(todo) {
+
+        fetch(`api/todos/${todo.id}`, {
+            method: 'PUT',
+            body: JSON.stringify({todo: todo}),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response) => { return response.json(); })
+        .then((data) => { 
+            let items = [...this.state.items];
+            const index = items.findIndex(item => item.id == data.id);
+            let item = { ...items[index] };
+            item.completed = data.completed;
+            items[index] = item;
+            this.setState({ items });
+        });
+
+    }
+
 
 }
 
@@ -97,7 +124,7 @@ class TodoList extends React.Component {
     render() {
         return (
             <ul>
-                {this.props.items.map(item => <Todo id={item.id} text={item.description} completed={item.completed} deleteHandler={this.props.deleteHandler} completeHandler={this.props.completeHandler} editHandler={this.props.editHandler} />)}
+                {this.props.items.map(item => <Todo key={item.id} id={item.id} text={item.description} completed={item.completed} deleteHandler={this.props.deleteHandler} completeHandler={this.props.completeHandler} editHandler={this.props.editHandler} />)}
             </ul>
         );
     }
@@ -117,10 +144,7 @@ class Todo extends React.Component {
     }
 
     handleEditing(e) {
-        if (this.state.editing)
-            this.setState({ editing: false });
-        else
-            this.setState({ editing: true });
+        this.setState({ editing: !this.state.editing });
     }
 
     render() {
@@ -131,12 +155,13 @@ class Todo extends React.Component {
                     <input onChange={this.handleChange} value={this.state.text} />
                     <button
                         onClick={(e) => {
-                            this.props.editHandler(this.props.id, this.state.text);
+                            let editedTodo = {id: this.props.id, description: this.state.text};
+                            this.props.editHandler(editedTodo);
                             this.handleEditing(e);
                         }}
                     >
                         Done
-              </button>
+                    </button>
                 </li>
             );
         } else {
@@ -145,7 +170,10 @@ class Todo extends React.Component {
                     <input
                         type="checkbox"
                         checked={this.props.completed}
-                        onChange={() => this.props.completeHandler(this.props.id)}
+                        onChange={() => {
+                            let editedTodo = {id: this.props.id, completed: !this.props.completed};
+                            this.props.completeHandler(editedTodo);
+                        }}
                     />
                     {this.props.completed ? <span className="strike">{this.state.text}</span> : <span>{this.state.text}</span>}
                     <button className="right" onClick={() => this.props.deleteHandler(this.props.id)}>Delete</button>

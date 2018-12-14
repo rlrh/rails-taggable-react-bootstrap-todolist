@@ -39,6 +39,7 @@
   }
   
   .input {
+    position: relative;
     box-sizing: border-box;
     outline: none;
     background-color: #fff;
@@ -51,6 +52,7 @@
     width: 484px;
     padding: 5px 9px;
     padding-left: 16px;
+    z-index: 10;
   }
   
   .input:hover,
@@ -65,8 +67,8 @@
     margin: 0;
     padding: 4px 0 8px;
     left: 0;
-    box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.08);
-    z-index: 1123123123;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
+    z-index: 5;
     background: #fff;
   }
   
